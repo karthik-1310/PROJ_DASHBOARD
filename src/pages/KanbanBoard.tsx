@@ -9,6 +9,8 @@ import TaskDetailDialog from '@/components/TaskDetailDialog';
 import SearchAndFilter from '@/components/SearchAndFilter';
 import { isPast, parseISO, isWithinInterval } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
+import { Kanban, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const KanbanBoard = () => {
   const { 
@@ -143,6 +145,11 @@ const KanbanBoard = () => {
     setInitialStatus(status);
     setFormDialogOpen(true);
   };
+
+  const handleAddTaskGeneral = () => {
+    setInitialStatus('todo');
+    setFormDialogOpen(true);
+  };
   
   const handleSaveTask = (taskData: Omit<Task, 'id' | 'createdAt' | 'history'>) => {
     const newTaskId = addTask(taskData);
@@ -166,7 +173,18 @@ const KanbanBoard = () => {
   
   return (
     <>
-      <h1 className="text-2xl font-bold mb-6">Kanban Board</h1>
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <Kanban className="h-6 w-6" /> Kanban Board
+          </h1>
+          <p className="text-muted-foreground">Drag and drop tasks between columns to update their status</p>
+        </div>
+        
+        <Button onClick={handleAddTaskGeneral} className="flex items-center gap-2">
+          <Plus className="h-4 w-4" /> New Task
+        </Button>
+      </div>
       
       <SearchAndFilter users={users} tags={tags} />
       
@@ -175,7 +193,7 @@ const KanbanBoard = () => {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="flex gap-6 overflow-x-auto pb-6">
+        <div className="flex gap-6 overflow-x-auto pb-6 mt-4">
           {boardConfig.columns.map(column => (
             <KanbanColumn
               key={column.id}

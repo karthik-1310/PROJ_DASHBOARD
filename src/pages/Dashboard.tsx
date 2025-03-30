@@ -7,8 +7,19 @@ import { Badge } from '@/components/ui/badge';
 import { useTaskStore } from '@/store/taskStore';
 import { formatDistanceToNow, isPast, parseISO, format } from 'date-fns';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, Bell, CheckCircle, Clock, FileEdit, Info } from 'lucide-react';
-import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { 
+  AlertCircle, 
+  Bell, 
+  CheckCircle, 
+  Clock, 
+  FileEdit, 
+  Info,
+  BarChart2,
+  PieChart,
+  TrendingUp,
+  Users
+} from 'lucide-react';
+import { PieChart as ReChartPie, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { Link } from 'react-router-dom';
 
 const STATUS_COLORS = {
@@ -51,7 +62,8 @@ const Dashboard = () => {
     }, {})
   ).map(([priority, count]) => ({
     name: priority.charAt(0).toUpperCase() + priority.slice(1),
-    count
+    count,
+    color: priority === 'high' ? '#DC2626' : priority === 'medium' ? '#F59E0B' : '#10B981'
   }));
   
   // Calculate completion rate
@@ -117,7 +129,7 @@ const Dashboard = () => {
             .filter(task => !dismissedAlerts.includes(task.id))
             .slice(0, 3)
             .map(task => (
-              <Alert key={task.id} variant="destructive" className="flex justify-between items-center">
+              <Alert key={task.id} variant="destructive" className="flex justify-between items-center rounded-xl shadow-sm">
                 <div className="flex items-start gap-2">
                   <AlertCircle className="h-4 w-4 mt-0.5" />
                   <div>
@@ -146,11 +158,12 @@ const Dashboard = () => {
         </div>
       )}
       
-      {/* Stats row */}
+      {/* Stats row - Bento grid style with icons */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
+        <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl">
+          <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-sm font-medium">Total Tasks</CardTitle>
+            <CheckCircle className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{tasks.length}</div>
@@ -160,9 +173,10 @@ const Dashboard = () => {
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader className="pb-2">
+        <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl">
+          <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-sm font-medium">Completion Rate</CardTitle>
+            <TrendingUp className="h-5 w-5 text-green-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{completionRate}%</div>
@@ -172,9 +186,10 @@ const Dashboard = () => {
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader className="pb-2">
+        <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl">
+          <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-sm font-medium">In Progress</CardTitle>
+            <Clock className="h-5 w-5 text-amber-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -186,9 +201,10 @@ const Dashboard = () => {
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader className="pb-2">
+        <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl">
+          <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-sm font-medium">Overdue</CardTitle>
+            <AlertCircle className="h-5 w-5 text-red-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-priority-high">
@@ -201,17 +217,20 @@ const Dashboard = () => {
         </Card>
       </div>
       
-      {/* Charts row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
+      {/* Charts row - Improved bento grid layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl">
           <CardHeader>
-            <CardTitle>Task Status</CardTitle>
+            <div className="flex justify-between items-center">
+              <CardTitle>Task Status</CardTitle>
+              <PieChart className="h-5 w-5 text-muted-foreground" />
+            </div>
             <CardDescription>Distribution of tasks by status</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[250px]">
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
+                <ReChartPie>
                   <Pie
                     data={statusDistribution}
                     cx="50%"
@@ -230,15 +249,18 @@ const Dashboard = () => {
                     ))}
                   </Pie>
                   <Tooltip />
-                </PieChart>
+                </ReChartPie>
               </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl">
           <CardHeader>
-            <CardTitle>Task Priority</CardTitle>
+            <div className="flex justify-between items-center">
+              <CardTitle>Task Priority</CardTitle>
+              <BarChart2 className="h-5 w-5 text-muted-foreground" />
+            </div>
             <CardDescription>Breakdown by priority level</CardDescription>
           </CardHeader>
           <CardContent>
@@ -253,14 +275,14 @@ const Dashboard = () => {
                     bottom: 5,
                   }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" />
+                  <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.4} />
                   <XAxis dataKey="name" />
                   <YAxis />
                   <Tooltip />
                   <Bar dataKey="count" name="Tasks">
-                    <Cell fill="#DC2626" /> {/* High */}
-                    <Cell fill="#F59E0B" /> {/* Medium */}
-                    <Cell fill="#10B981" /> {/* Low */}
+                    {priorityBreakdown.map((entry) => (
+                      <Cell key={entry.name} fill={entry.color} />
+                    ))}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
@@ -270,10 +292,13 @@ const Dashboard = () => {
       </div>
       
       {/* Activity and tasks row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl">
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
+            <div className="flex justify-between items-center">
+              <CardTitle>Recent Activity</CardTitle>
+              <Bell className="h-5 w-5 text-muted-foreground" />
+            </div>
             <CardDescription>Latest updates across projects</CardDescription>
           </CardHeader>
           <CardContent>
@@ -285,7 +310,7 @@ const Dashboard = () => {
                   const relativeTime = formatDistanceToNow(parseISO(activity.timestamp), { addSuffix: true });
                   
                   return (
-                    <div key={activity.id} className="flex">
+                    <div key={activity.id} className="flex p-2 hover:bg-muted/50 rounded-lg transition-colors">
                       <div className="mr-4 flex-shrink-0">
                         {getActivityIcon(activity.type)}
                       </div>
@@ -304,9 +329,12 @@ const Dashboard = () => {
         </Card>
         
         <div className="grid gap-4">
-          <Card>
+          <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl">
             <CardHeader>
-              <CardTitle>High Priority Tasks</CardTitle>
+              <div className="flex justify-between items-center">
+                <CardTitle>High Priority Tasks</CardTitle>
+                <AlertCircle className="h-5 w-5 text-red-500" />
+              </div>
               <CardDescription>Tasks that need immediate attention</CardDescription>
             </CardHeader>
             <CardContent>
@@ -315,9 +343,9 @@ const Dashboard = () => {
                   <div className="text-center text-muted-foreground py-3">No high priority tasks</div>
                 ) : (
                   highPriorityTasks.map((task) => (
-                    <div key={task.id} className="flex items-center gap-3 border-b pb-2 last:border-0">
+                    <div key={task.id} className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded-lg transition-colors">
                       <div 
-                        className="h-2 w-2 rounded-full"
+                        className="h-3 w-3 rounded-full"
                         style={{ backgroundColor: STATUS_COLORS[task.status] }}
                       ></div>
                       
@@ -351,9 +379,12 @@ const Dashboard = () => {
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl">
             <CardHeader>
-              <CardTitle>Recently Completed</CardTitle>
+              <div className="flex justify-between items-center">
+                <CardTitle>Recently Completed</CardTitle>
+                <CheckCircle className="h-5 w-5 text-green-500" />
+              </div>
               <CardDescription>Tasks that were recently finished</CardDescription>
             </CardHeader>
             <CardContent>
@@ -368,8 +399,8 @@ const Dashboard = () => {
                       : 'recently';
                     
                     return (
-                      <div key={task.id} className="flex items-center gap-3 border-b pb-2 last:border-0">
-                        <div className="bg-green-500 h-2 w-2 rounded-full"></div>
+                      <div key={task.id} className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded-lg transition-colors">
+                        <div className="bg-green-500 h-3 w-3 rounded-full"></div>
                         
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium truncate">{task.title}</p>
@@ -386,6 +417,7 @@ const Dashboard = () => {
                                 color: tags.find(t => t.id === task.tags[0])?.color,
                                 borderColor: tags.find(t => t.id === task.tags[0])?.color
                               }}
+                              className="rounded-full"
                             >
                               {tags.find(t => t.id === task.tags[0])?.name}
                             </Badge>
@@ -403,7 +435,7 @@ const Dashboard = () => {
       
       {/* Get Started Card */}
       {tasks.length === 0 && (
-        <Card className="mt-6">
+        <Card className="mt-6 shadow-sm hover:shadow-md transition-shadow rounded-xl">
           <CardHeader>
             <CardTitle>Welcome to Your Kanban Project Management Board</CardTitle>
             <CardDescription>Get started by creating your first task</CardDescription>
@@ -419,15 +451,15 @@ const Dashboard = () => {
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full mt-4">
-              <div className="border rounded-md p-4 text-center">
+              <div className="border rounded-lg p-4 text-center hover:bg-muted/50 transition-colors">
                 <h3 className="font-medium mb-1">Create Tasks</h3>
                 <p className="text-sm text-muted-foreground">Add and organize your tasks by status</p>
               </div>
-              <div className="border rounded-md p-4 text-center">
+              <div className="border rounded-lg p-4 text-center hover:bg-muted/50 transition-colors">
                 <h3 className="font-medium mb-1">Drag & Drop</h3>
                 <p className="text-sm text-muted-foreground">Move tasks between columns as they progress</p>
               </div>
-              <div className="border rounded-md p-4 text-center">
+              <div className="border rounded-lg p-4 text-center hover:bg-muted/50 transition-colors">
                 <h3 className="font-medium mb-1">Track Progress</h3>
                 <p className="text-sm text-muted-foreground">Monitor progress with visual analytics</p>
               </div>

@@ -33,7 +33,7 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -108,17 +108,54 @@
 }
 
 .task-card {
-  @apply bg-card text-card-foreground rounded-md shadow-sm border p-4 hover:shadow-md transition-shadow cursor-pointer animate-enter;
+  @apply bg-card text-card-foreground rounded-xl shadow-sm border p-4 hover:shadow-md transition-shadow cursor-pointer animate-enter;
 }
 
 .task-column {
-  @apply bg-background border rounded-md shadow-sm flex flex-col h-[calc(100vh-10rem)] min-w-[300px];
+  @apply bg-background border rounded-xl shadow-sm flex flex-col h-[calc(100vh-10rem)] min-w-[300px];
 }
 
 .column-header {
-  @apply font-medium p-3 border-b flex items-center justify-between sticky top-0 bg-inherit z-10 rounded-t-md;
+  @apply font-medium p-3 border-b flex items-center justify-between sticky top-0 bg-inherit z-10 rounded-t-xl;
 }
 
 .column-content {
   @apply p-2 overflow-y-auto flex-grow space-y-3;
+}
+
+/* Task priority styling */
+.priority-high {
+  @apply border-l-4 border-red-500;
+}
+
+.priority-medium {
+  @apply border-l-4 border-amber-500;
+}
+
+.priority-low {
+  @apply border-l-4 border-green-500;
+}
+
+/* Chart styles */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  @apply stroke-muted-foreground/20;
+}
+
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  @apply bg-background/90 backdrop-blur-sm border border-border shadow-lg rounded-lg !important;
+}
+
+.recharts-default-tooltip {
+  @apply text-foreground !important;
+}
+
+/* Card hover effects */
+.card-hover {
+  @apply transition-all duration-300 hover:shadow-md hover:translate-y-[-2px];
+}
+
+/* Bento grid layout */
+.bento-grid {
+  @apply grid gap-4 auto-rows-fr;
 }

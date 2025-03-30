@@ -1,5 +1,4 @@
 
-// Redirect to Dashboard from the old index page
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 

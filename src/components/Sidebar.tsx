@@ -20,7 +20,8 @@ import {
   Settings, 
   Kanban, 
   CheckSquare,
-  Clock
+  Clock,
+  PanelLeft
 } from 'lucide-react';
 
 const navigationItems = [
@@ -75,11 +76,11 @@ const Sidebar = () => {
 
   return (
     <>
-      <SidebarComponent expanded={isSidebarExpanded} className="shadow-md">
-        <div className="flex items-center h-16 px-4 border-b">
+      <SidebarComponent expanded={isSidebarExpanded} className="shadow-md bg-sidebar border-r border-sidebar-border">
+        <div className="flex items-center h-16 px-4 border-b border-sidebar-border">
           <div className="flex items-center gap-2">
-            {isSidebarExpanded && <span className="text-lg font-bold">Kanban Garden</span>}
-            {!isSidebarExpanded && <Kanban className="h-6 w-6" />}
+            <Kanban className={`h-6 w-6 text-sidebar-primary ${isSidebarExpanded ? 'mr-2' : ''}`} />
+            {isSidebarExpanded && <span className="text-lg font-bold text-sidebar-foreground">Kanban Garden</span>}
           </div>
         </div>
         <SidebarContent>
@@ -94,7 +95,7 @@ const Sidebar = () => {
                     <SidebarMenuButton asChild active={location.pathname === item.path}>
                       <a 
                         href={item.path} 
-                        className="flex items-center gap-3"
+                        className="flex items-center gap-3 rounded-lg hover:bg-sidebar-accent transition-colors"
                         aria-current={location.pathname === item.path ? 'page' : undefined}
                       >
                         <item.icon className="h-5 w-5" />
@@ -114,7 +115,7 @@ const Sidebar = () => {
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <a href="#" className="flex items-center gap-3">
+                      <a href="#" className="flex items-center gap-3 rounded-lg hover:bg-sidebar-accent transition-colors">
                         <CheckSquare className="h-4 w-4 text-green-500" />
                         <span className="truncate">Design Homepage UI</span>
                       </a>
@@ -122,7 +123,7 @@ const Sidebar = () => {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <a href="#" className="flex items-center gap-3">
+                      <a href="#" className="flex items-center gap-3 rounded-lg hover:bg-sidebar-accent transition-colors">
                         <Clock className="h-4 w-4 text-amber-500" />
                         <span className="truncate">API Integration</span>
                       </a>
@@ -136,7 +137,9 @@ const Sidebar = () => {
       </SidebarComponent>
       
       <div className="absolute left-4 bottom-4 z-50">
-        <SidebarTrigger onClick={handleToggleSidebar} />
+        <SidebarTrigger onClick={handleToggleSidebar} className="bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/80">
+          <PanelLeft className="h-4 w-4" />
+        </SidebarTrigger>
       </div>
     </>
   );

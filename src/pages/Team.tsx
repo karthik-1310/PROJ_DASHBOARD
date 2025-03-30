@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { Plus, Search } from 'lucide-react';
+import { Plus, Search, Users, BarChart, UserPlus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 
@@ -65,7 +65,7 @@ const Team = () => {
     );
     
     return Object.entries(distribution).map(([status, count]) => ({
-      name: statusLabels[status],
+      name: statusLabels[status as keyof typeof statusLabels] || status,
       value: count,
       status
     }));
@@ -97,19 +97,21 @@ const Team = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Team Members</h1>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <Users className="h-6 w-6" /> Team Members
+          </h1>
           <p className="text-muted-foreground">Manage and view team workload</p>
         </div>
         
         <div className="flex flex-wrap items-center gap-2">
           <div className="relative">
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search team members..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-[200px] pr-8"
+              className="pl-10 pr-4 w-[200px] rounded-full"
             />
-            <Search className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground" />
           </div>
           
           <Select value={sortBy} onValueChange={(value) => setSortBy(value as 'name' | 'workload')}>
@@ -122,8 +124,8 @@ const Team = () => {
             </SelectContent>
           </Select>
           
-          <Button onClick={() => setIsAddUserDialogOpen(true)}>
-            <Plus className="h-4 w-4 mr-1" /> Add Member
+          <Button onClick={() => setIsAddUserDialogOpen(true)} variant="default" className="rounded-full">
+            <UserPlus className="h-4 w-4 mr-2" /> Add Member
           </Button>
         </div>
       </div>
@@ -138,13 +140,13 @@ const Team = () => {
           return (
             <Card 
               key={user.id} 
-              className={`hover:shadow-md transition-shadow ${isSelected ? 'ring-2 ring-primary' : ''}`}
+              className={`hover:shadow-md transition-all duration-300 hover:-translate-y-1 rounded-xl ${isSelected ? 'ring-2 ring-primary' : ''}`}
               onClick={() => setSelectedUser(isSelected ? null : user.id)}
             >
               <CardHeader className="pb-2">
                 <div className="flex justify-between items-start">
                   <div className="flex items-center space-x-3">
-                    <Avatar className="h-10 w-10">
+                    <Avatar className="h-12 w-12 border-2 border-primary/20">
                       <AvatarImage src={user.avatar} />
                       <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                     </Avatar>
@@ -155,46 +157,48 @@ const Team = () => {
                       </CardDescription>
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm" asChild>
+                  <Button variant="ghost" size="sm" asChild className="rounded-full">
                     <Link to={`/kanban?assignee=${user.id}`}>View Tasks</Link>
                   </Button>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-xs">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs font-medium">
                       <span>Completion Rate</span>
                       <span className="font-medium">{completionRate}%</span>
                     </div>
-                    <Progress value={completionRate} className="h-2" />
+                    <Progress value={completionRate} className="h-2" 
+                      indicatorClassName={completionRate > 66 ? "bg-green-500" : completionRate > 33 ? "bg-amber-500" : "bg-red-500"} 
+                    />
                   </div>
                   
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="space-y-1">
-                      <div className="flex justify-between">
+                      <div className="flex justify-between p-1.5 rounded bg-red-500/10">
                         <span className="text-muted-foreground">To Do</span>
-                        <span>{userTasks.filter(t => t.status === 'todo').length}</span>
+                        <span className="font-medium">{userTasks.filter(t => t.status === 'todo').length}</span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className="flex justify-between p-1.5 rounded bg-amber-500/10">
                         <span className="text-muted-foreground">In Progress</span>
-                        <span>{userTasks.filter(t => t.status === 'in-progress').length}</span>
+                        <span className="font-medium">{userTasks.filter(t => t.status === 'in-progress').length}</span>
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <div className="flex justify-between">
+                      <div className="flex justify-between p-1.5 rounded bg-blue-500/10">
                         <span className="text-muted-foreground">Review</span>
-                        <span>{userTasks.filter(t => t.status === 'review').length}</span>
+                        <span className="font-medium">{userTasks.filter(t => t.status === 'review').length}</span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className="flex justify-between p-1.5 rounded bg-green-500/10">
                         <span className="text-muted-foreground">Done</span>
-                        <span>{userTasks.filter(t => t.status === 'done').length}</span>
+                        <span className="font-medium">{userTasks.filter(t => t.status === 'done').length}</span>
                       </div>
                     </div>
                   </div>
                   
                   {userTasks.length > 0 && (
-                    <div className="flex gap-1">
+                    <div className="flex flex-wrap gap-1 mt-2">
                       {userTasks
                         .filter(t => t.status !== 'done')
                         .slice(0, 3)
@@ -202,13 +206,13 @@ const Team = () => {
                           <Badge 
                             key={task.id} 
                             variant="outline" 
-                            className="truncate max-w-[120px] text-xs"
+                            className="truncate max-w-[120px] text-xs rounded-full"
                           >
                             {task.title}
                           </Badge>
                         ))}
                       {userTasks.filter(t => t.status !== 'done').length > 3 && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs rounded-full">
                           +{userTasks.filter(t => t.status !== 'done').length - 3} more
                         </Badge>
                       )}
@@ -223,11 +227,17 @@ const Team = () => {
       
       {/* Selected user details */}
       {selectedUser && (
-        <Card className="mt-4">
+        <Card className="mt-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
           <CardHeader>
-            <CardTitle>
-              {users.find(u => u.id === selectedUser)?.name}'s Workload
-            </CardTitle>
+            <div className="flex justify-between items-center">
+              <CardTitle className="flex items-center gap-2">
+                <BarChart className="h-5 w-5" />
+                {users.find(u => u.id === selectedUser)?.name}'s Workload
+              </CardTitle>
+              <Button variant="ghost" size="sm" onClick={() => setSelectedUser(null)} className="rounded-full">
+                Close
+              </Button>
+            </div>
             <CardDescription>
               Detailed task distribution and status
             </CardDescription>
@@ -261,7 +271,9 @@ const Team = () => {
               </div>
               
               <div className="flex flex-col justify-center">
-                <h3 className="text-lg font-medium mb-3">Task Summary</h3>
+                <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
+                  <BarChart className="h-4 w-4" /> Task Summary
+                </h3>
                 <ul className="space-y-4">
                   {Object.entries(statusLabels).map(([status, label]) => {
                     const count = tasks.filter(
@@ -298,9 +310,11 @@ const Team = () => {
       
       {/* Add User Dialog */}
       <Dialog open={isAddUserDialogOpen} onOpenChange={setIsAddUserDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] rounded-xl">
           <DialogHeader>
-            <DialogTitle>Add Team Member</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              <UserPlus className="h-5 w-5" /> Add Team Member
+            </DialogTitle>
             <DialogDescription>
               Add a new team member to assign tasks to them.
             </DialogDescription>
@@ -319,24 +333,26 @@ const Team = () => {
           </div>
           
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddUserDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setIsAddUserDialogOpen(false)} className="rounded-full">
               Cancel
             </Button>
-            <Button onClick={handleAddUser}>Add Member</Button>
+            <Button onClick={handleAddUser} className="rounded-full">
+              <Plus className="h-4 w-4 mr-2" /> Add Member
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
       
       {/* Empty state */}
       {filteredUsers.length === 0 && (
-        <Card className="p-8 text-center">
+        <Card className="p-8 text-center rounded-xl shadow-sm">
           <div className="mx-auto max-w-md">
             <h3 className="text-lg font-medium mb-2">No team members found</h3>
             <p className="text-muted-foreground mb-4">
               {searchTerm ? "No members match your search criteria." : "Add team members to get started."}
             </p>
-            <Button onClick={() => setIsAddUserDialogOpen(true)}>
-              <Plus className="h-4 w-4 mr-1" /> Add Member
+            <Button onClick={() => setIsAddUserDialogOpen(true)} className="rounded-full">
+              <UserPlus className="h-4 w-4 mr-2" /> Add Member
             </Button>
           </div>
         </Card>
