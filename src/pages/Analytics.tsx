@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ResponsiveContainer, PieChart, Pie, Cell, BarChart as RechartBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line } from 'recharts';
 import { BarChart2, CalendarClock, CheckSquare, Clock, ClipboardList } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const COLORS = {
   'todo': '#e11d48',
@@ -18,7 +19,6 @@ const COLORS = {
 const Analytics = () => {
   const { tasks, users } = useTaskStore();
   
-  // Calculate task status distribution
   const statusData = [
     { name: 'To Do', value: tasks.filter(t => t.status === 'todo').length, status: 'todo' },
     { name: 'In Progress', value: tasks.filter(t => t.status === 'in-progress').length, status: 'in-progress' },
@@ -26,25 +26,21 @@ const Analytics = () => {
     { name: 'Done', value: tasks.filter(t => t.status === 'done').length, status: 'done' },
   ];
   
-  // Calculate priority distribution
   const priorityData = [
     { name: 'High', value: tasks.filter(t => t.priority === 'high').length, priority: 'high' },
     { name: 'Medium', value: tasks.filter(t => t.priority === 'medium').length, priority: 'medium' },
     { name: 'Low', value: tasks.filter(t => t.priority === 'low').length, priority: 'low' },
   ];
   
-  // Calculate tasks per assignee
   const assigneeData = users.map(user => ({
     name: user.name,
     total: tasks.filter(t => t.assigneeId === user.id).length,
     completed: tasks.filter(t => t.assigneeId === user.id && t.status === 'done').length,
   })).sort((a, b) => b.total - a.total);
   
-  // Calculate completion rate
   const completedTasks = tasks.filter(t => t.status === 'done').length;
   const completionRate = tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0;
   
-  // Get recent tasks
   const recentTasks = [...tasks]
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 5);
@@ -60,7 +56,6 @@ const Analytics = () => {
         </p>
       </div>
       
-      {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="rounded-xl hover:shadow-md transition-all duration-300">
           <CardContent className="p-6">
@@ -131,9 +126,7 @@ const Analytics = () => {
         </Card>
       </div>
       
-      {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Status Distribution */}
         <Card className="rounded-xl hover:shadow-md transition-all duration-300">
           <CardHeader>
             <CardTitle>Task Status Distribution</CardTitle>
@@ -168,7 +161,6 @@ const Analytics = () => {
           </CardContent>
         </Card>
         
-        {/* Priority Distribution */}
         <Card className="rounded-xl hover:shadow-md transition-all duration-300">
           <CardHeader>
             <CardTitle>Tasks by Priority</CardTitle>
@@ -205,7 +197,6 @@ const Analytics = () => {
         </Card>
       </div>
       
-      {/* Team Performance */}
       <Card className="rounded-xl hover:shadow-md transition-all duration-300">
         <CardHeader>
           <CardTitle>Team Member Performance</CardTitle>
@@ -237,7 +228,6 @@ const Analytics = () => {
         </CardContent>
       </Card>
       
-      {/* Recent Activity */}
       <Card className="rounded-xl hover:shadow-md transition-all duration-300">
         <CardHeader>
           <CardTitle>Recent Tasks</CardTitle>
