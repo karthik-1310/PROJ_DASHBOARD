@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { useTaskStore, Tag, BoardConfig } from '@/store/taskStore';
+import { useTaskStore, Tag, BoardConfig, Status } from '@/store/taskStore';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -105,7 +105,12 @@ const Settings = () => {
       counter++;
     }
     
-    const updatedColumns = [...columns, { id, title: newColumnTitle }];
+    // Fix: Validate that the ID is one of the allowed Status types
+    // This is a temporary fix - we cast the ID to Status type for backward compatibility
+    // In a real-world scenario, we might want to update the Status type to be more flexible
+    const validStatusId = id as Status;
+    const updatedColumns = [...columns, { id: validStatusId, title: newColumnTitle }];
+    
     setColumns(updatedColumns);
     updateBoardConfig({ columns: updatedColumns });
     

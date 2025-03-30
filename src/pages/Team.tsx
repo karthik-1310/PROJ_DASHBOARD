@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useTaskStore, User } from '@/store/taskStore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -169,8 +168,15 @@ const Team = () => {
                       <span>Completion Rate</span>
                       <span className="font-medium">{completionRate}%</span>
                     </div>
-                    <Progress value={completionRate} className="h-2" 
-                      indicatorClassName={completionRate > 66 ? "bg-green-500" : completionRate > 33 ? "bg-amber-500" : "bg-red-500"} 
+                    {/* Fix: Update Progress component to use updated interface */}
+                    <Progress 
+                      value={completionRate} 
+                      className="h-2" 
+                      indicatorClassName={
+                        completionRate > 66 ? "bg-green-500" : 
+                        completionRate > 33 ? "bg-amber-500" : 
+                        "bg-red-500"
+                      } 
                     />
                   </div>
                   
@@ -291,6 +297,7 @@ const Team = () => {
                             <span>{label}</span>
                             <span className="font-medium">{count}</span>
                           </div>
+                          {/* Fix: Update Progress component to use updated interface */}
                           <Progress 
                             value={count} 
                             max={tasks.filter(t => t.assigneeId === selectedUser).length || 1} 

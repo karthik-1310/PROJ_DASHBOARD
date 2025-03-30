@@ -76,7 +76,8 @@ const Sidebar = () => {
 
   return (
     <>
-      <SidebarComponent expanded={isSidebarExpanded} className="shadow-md bg-sidebar border-r border-sidebar-border">
+      {/* Fix 1: Remove 'expanded' prop and use data-state attribute instead */}
+      <SidebarComponent className="shadow-md bg-sidebar border-r border-sidebar-border">
         <div className="flex items-center h-16 px-4 border-b border-sidebar-border">
           <div className="flex items-center gap-2">
             <Kanban className={`h-6 w-6 text-sidebar-primary ${isSidebarExpanded ? 'mr-2' : ''}`} />
@@ -92,7 +93,8 @@ const Sidebar = () => {
               <SidebarMenu>
                 {navigationItems.map((item) => (
                   <SidebarMenuItem key={item.path}>
-                    <SidebarMenuButton asChild active={location.pathname === item.path}>
+                    {/* Fix 2: Change 'active' prop to 'isActive' */}
+                    <SidebarMenuButton asChild isActive={location.pathname === item.path}>
                       <a 
                         href={item.path} 
                         className="flex items-center gap-3 rounded-lg hover:bg-sidebar-accent transition-colors"
