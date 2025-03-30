@@ -17,10 +17,13 @@ import {
   BarChart2,
   PieChart,
   TrendingUp,
-  Users
+  Users,
+  ChevronRight,
+  MoreHorizontal
 } from 'lucide-react';
-import { PieChart as ReChartPie, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { PieChart as ReChartPie, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { Link } from 'react-router-dom';
+import { Progress } from '@/components';
 
 const STATUS_COLORS = {
   'todo': '#e11d48',
@@ -120,117 +123,122 @@ const Dashboard = () => {
   
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+        <h1 className="text-3xl font-bold mb-2">
+          Start Your Day & Be Productive ✌️
+        </h1>
+        <div>
+          <Button asChild variant="outline" className="rounded-full">
+            <Link to="/kanban">
+              <span>Today's Tasks</span>
+              <ChevronRight className="ml-1 h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+      </div>
       
       {/* Alert for overdue tasks */}
       {overdueTasks.length > 0 && (
-        <div className="grid gap-3">
-          {overdueTasks
-            .filter(task => !dismissedAlerts.includes(task.id))
-            .slice(0, 3)
-            .map(task => (
-              <Alert key={task.id} variant="destructive" className="flex justify-between items-center rounded-xl shadow-sm">
-                <div className="flex items-start gap-2">
-                  <AlertCircle className="h-4 w-4 mt-0.5" />
-                  <div>
-                    <AlertTitle>Overdue Task</AlertTitle>
-                    <AlertDescription>
-                      "{task.title}" is overdue by{' '}
-                      {formatDistanceToNow(parseISO(task.deadline!), { addSuffix: false })}
-                    </AlertDescription>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" asChild>
-                    <Link to="/kanban">View Task</Link>
-                  </Button>
-                  <Button size="sm" variant="ghost" onClick={() => dismissAlert(task.id)}>
-                    Dismiss
-                  </Button>
-                </div>
-              </Alert>
-            ))}
-          {overdueTasks.length > 3 && (
-            <div className="text-sm text-muted-foreground text-center">
-              + {overdueTasks.length - 3} more overdue tasks
+        <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl dark:bg-amber-900/20 dark:border-amber-800">
+          <div className="flex items-center gap-3">
+            <div className="bg-amber-100 dark:bg-amber-800 p-2 rounded-full">
+              <Bell className="h-5 w-5 text-amber-600 dark:text-amber-400" />
             </div>
-          )}
+            <div>
+              <h3 className="font-medium">You have {overdueTasks.length} overdue {overdueTasks.length === 1 ? 'task' : 'tasks'}</h3>
+              <p className="text-sm text-muted-foreground">Keep it up! Complete your tasks to increase your productivity.</p>
+            </div>
+          </div>
         </div>
       )}
       
-      {/* Stats row - Bento grid style with icons */}
+      {/* Stats row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl">
-          <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-sm font-medium">Total Tasks</CardTitle>
-            <CheckCircle className="h-5 w-5 text-primary" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{tasks.length}</div>
-            <div className="text-xs text-muted-foreground">
-              Across all projects
+        <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden border-t-4 border-t-primary">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Tasks</p>
+                <h3 className="text-2xl font-bold mt-1">{tasks.length}</h3>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Across all projects
+                </p>
+              </div>
+              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <CheckCircle className="h-5 w-5 text-primary" />
+              </div>
             </div>
           </CardContent>
         </Card>
         
-        <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl">
-          <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-sm font-medium">Completion Rate</CardTitle>
-            <TrendingUp className="h-5 w-5 text-green-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{completionRate}%</div>
-            <div className="text-xs text-muted-foreground">
-              {completedTasks} of {tasks.length} tasks completed
+        <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden border-t-4 border-t-green-500">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Completion Rate</p>
+                <h3 className="text-2xl font-bold mt-1">{completionRate}%</h3>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {completedTasks} of {tasks.length} completed
+                </p>
+              </div>
+              <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center">
+                <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
+              </div>
             </div>
           </CardContent>
         </Card>
         
-        <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl">
-          <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-sm font-medium">In Progress</CardTitle>
-            <Clock className="h-5 w-5 text-amber-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {tasks.filter(task => task.status === 'in-progress').length}
-            </div>
-            <div className="text-xs text-muted-foreground">
-              Active tasks
+        <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden border-t-4 border-t-amber-500">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">In Progress</p>
+                <h3 className="text-2xl font-bold mt-1">{tasks.filter(task => task.status === 'in-progress').length}</h3>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Active tasks
+                </p>
+              </div>
+              <div className="h-10 w-10 rounded-full bg-amber-100 dark:bg-amber-900/20 flex items-center justify-center">
+                <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              </div>
             </div>
           </CardContent>
         </Card>
         
-        <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl">
-          <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-sm font-medium">Overdue</CardTitle>
-            <AlertCircle className="h-5 w-5 text-red-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-priority-high">
-              {overdueTasks.length}
-            </div>
-            <div className="text-xs text-muted-foreground">
-              Tasks past deadline
+        <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden border-t-4 border-t-red-500">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Overdue</p>
+                <h3 className="text-2xl font-bold mt-1 text-destructive">{overdueTasks.length}</h3>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Tasks past deadline
+                </p>
+              </div>
+              <div className="h-10 w-10 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
+                <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
       
-      {/* Charts row - Improved bento grid layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      {/* Task Progress and Charts row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl">
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle>Task Status</CardTitle>
-              <PieChart className="h-5 w-5 text-muted-foreground" />
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <div>
+              <CardTitle className="text-xl">Task Progress</CardTitle>
+              <CardDescription>Distribution of tasks by status</CardDescription>
             </div>
-            <CardDescription>Distribution of tasks by status</CardDescription>
+            <Button variant="ghost" size="icon" className="rounded-full">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
           </CardHeader>
           <CardContent>
             <div className="h-[250px]">
               <ResponsiveContainer width="100%" height="100%">
-                <ReChartPie>
+                <PieChart>
                   <Pie
                     data={statusDistribution}
                     cx="50%"
@@ -239,29 +247,31 @@ const Dashboard = () => {
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
-                    label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    label={({name, percent}) => percent > 0 ? `${name}: ${(percent * 100).toFixed(0)}%` : ''}
                   >
-                    {statusDistribution.map((entry) => (
+                    {statusDistribution.map((entry, index) => (
                       <Cell 
-                        key={entry.status} 
+                        key={`cell-${index}`} 
                         fill={STATUS_COLORS[entry.status] || '#ccc'} 
                       />
                     ))}
                   </Pie>
                   <Tooltip />
-                </ReChartPie>
+                </PieChart>
               </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
         
         <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl">
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle>Task Priority</CardTitle>
-              <BarChart2 className="h-5 w-5 text-muted-foreground" />
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <div>
+              <CardTitle className="text-xl">Task Timeline</CardTitle>
+              <CardDescription>Breakdown by priority level</CardDescription>
             </div>
-            <CardDescription>Breakdown by priority level</CardDescription>
+            <Button variant="ghost" size="icon" className="rounded-full">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
           </CardHeader>
           <CardContent>
             <div className="h-[250px]">
@@ -292,14 +302,16 @@ const Dashboard = () => {
       </div>
       
       {/* Activity and tasks row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl">
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle>Recent Activity</CardTitle>
-              <Bell className="h-5 w-5 text-muted-foreground" />
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <div>
+              <CardTitle className="text-xl">Recent Activity</CardTitle>
+              <CardDescription>Latest updates across projects</CardDescription>
             </div>
-            <CardDescription>Latest updates across projects</CardDescription>
+            <Button asChild variant="ghost" size="sm" className="text-xs">
+              <Link to="/kanban">See All <ChevronRight className="ml-1 h-3 w-3" /></Link>
+            </Button>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -330,62 +342,90 @@ const Dashboard = () => {
         
         <div className="grid gap-4">
           <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl">
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle>High Priority Tasks</CardTitle>
-                <AlertCircle className="h-5 w-5 text-red-500" />
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <div>
+                <CardTitle className="text-xl">Today's Tasks</CardTitle>
+                <CardDescription>Tasks that need immediate attention</CardDescription>
               </div>
-              <CardDescription>Tasks that need immediate attention</CardDescription>
+              <Button asChild variant="ghost" size="sm" className="text-xs">
+                <Link to="/kanban">See All <ChevronRight className="ml-1 h-3 w-3" /></Link>
+              </Button>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {highPriorityTasks.length === 0 ? (
                   <div className="text-center text-muted-foreground py-3">No high priority tasks</div>
                 ) : (
-                  highPriorityTasks.map((task) => (
-                    <div key={task.id} className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded-lg transition-colors">
-                      <div 
-                        className="h-3 w-3 rounded-full"
-                        style={{ backgroundColor: STATUS_COLORS[task.status] }}
-                      ></div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{task.title}</p>
-                        <div className="flex items-center">
+                  highPriorityTasks.map((task) => {
+                    const task_progress = Math.random() * 100;
+                    
+                    return (
+                      <div key={task.id} className="border rounded-lg p-3 hover:bg-muted/50 transition-colors">
+                        <div className="flex justify-between items-start mb-2">
+                          <div className="flex items-center gap-2">
+                            <div 
+                              className="h-3 w-3 rounded-full"
+                              style={{ backgroundColor: STATUS_COLORS[task.status] }}
+                            ></div>
+                            <p className="font-medium">{task.title}</p>
+                          </div>
+                          <Badge variant={task.priority === 'high' ? 'destructive' : 'outline'} className="text-xs">
+                            {task.priority}
+                          </Badge>
+                        </div>
+                        
+                        <div className="flex items-center justify-between mb-1 text-xs text-muted-foreground">
+                          <span>Progress</span>
+                          <span>{Math.round(task_progress)}%</span>
+                        </div>
+                        
+                        <Progress 
+                          className="h-1.5" 
+                          value={task_progress}
+                          indicatorClassName={
+                            task_progress > 66 ? "bg-green-500" : 
+                            task_progress > 33 ? "bg-amber-500" : 
+                            "bg-red-500"
+                          }
+                        />
+                        
+                        <div className="flex items-center justify-between mt-2">
                           {task.deadline && (
                             <div className="text-xs text-muted-foreground flex items-center">
                               <Clock className="h-3 w-3 mr-1" />
                               <span>{format(parseISO(task.deadline), 'MMM dd')}</span>
                             </div>
                           )}
+                          
+                          {task.assigneeId && (
+                            <Avatar className="h-6 w-6">
+                              <AvatarImage 
+                                src={users.find(u => u.id === task.assigneeId)?.avatar} 
+                                alt={users.find(u => u.id === task.assigneeId)?.name} 
+                              />
+                              <AvatarFallback>
+                                {users.find(u => u.id === task.assigneeId)?.name.charAt(0)}
+                              </AvatarFallback>
+                            </Avatar>
+                          )}
                         </div>
                       </div>
-                      
-                      {task.assigneeId && (
-                        <Avatar className="h-6 w-6">
-                          <AvatarImage 
-                            src={users.find(u => u.id === task.assigneeId)?.avatar} 
-                            alt={users.find(u => u.id === task.assigneeId)?.name} 
-                          />
-                          <AvatarFallback>
-                            {users.find(u => u.id === task.assigneeId)?.name.charAt(0)}
-                          </AvatarFallback>
-                        </Avatar>
-                      )}
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </CardContent>
           </Card>
           
           <Card className="shadow-sm hover:shadow-md transition-shadow rounded-xl">
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle>Recently Completed</CardTitle>
-                <CheckCircle className="h-5 w-5 text-green-500" />
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <div>
+                <CardTitle className="text-xl">Recently Completed</CardTitle>
+                <CardDescription>Tasks that were recently finished</CardDescription>
               </div>
-              <CardDescription>Tasks that were recently finished</CardDescription>
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
