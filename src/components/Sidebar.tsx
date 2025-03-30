@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import {
   Sidebar as SidebarComponent,
   SidebarContent,
@@ -99,14 +99,14 @@ const Sidebar = () => {
                 {navigationItems.map((item) => (
                   <SidebarMenuItem key={item.path}>
                     <SidebarMenuButton asChild isActive={location.pathname === item.path}>
-                      <a 
-                        href={item.path} 
+                      <Link
+                        to={item.path} 
                         className="flex items-center gap-3 rounded-lg hover:bg-sidebar-accent transition-colors"
                         aria-current={location.pathname === item.path ? 'page' : undefined}
                       >
                         <item.icon className="h-5 w-5" />
                         {isSidebarExpanded && <span>{item.title}</span>}
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -121,18 +121,18 @@ const Sidebar = () => {
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <a href="#" className="flex items-center gap-3 rounded-lg hover:bg-sidebar-accent transition-colors">
+                      <Link to="/kanban" className="flex items-center gap-3 rounded-lg hover:bg-sidebar-accent transition-colors">
                         <CheckSquare className="h-4 w-4 text-green-500" />
                         <span className="truncate">Design Homepage UI</span>
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <a href="#" className="flex items-center gap-3 rounded-lg hover:bg-sidebar-accent transition-colors">
+                      <Link to="/kanban" className="flex items-center gap-3 rounded-lg hover:bg-sidebar-accent transition-colors">
                         <Clock className="h-4 w-4 text-amber-500" />
                         <span className="truncate">API Integration</span>
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>
