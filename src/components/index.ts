@@ -8,4 +8,5 @@ export { default as ThemeToggle } from './ThemeToggle';
 export { default as Layout } from './Layout';
 export { Draggable } from './dnd/Draggable';
 export { Droppable } from './dnd/Droppable';
+export { Progress } from './ui/progress';
 

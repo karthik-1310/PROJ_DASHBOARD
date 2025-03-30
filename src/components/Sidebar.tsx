@@ -21,7 +21,8 @@ import {
   Kanban, 
   CheckSquare,
   Clock,
-  PanelLeft
+  PanelLeft,
+  User
 } from 'lucide-react';
 
 const navigationItems = [
@@ -51,6 +52,11 @@ const navigationItems = [
     icon: Users
   },
   {
+    title: 'Profile',
+    path: '/profile',
+    icon: User
+  },
+  {
     title: 'Settings',
     path: '/settings',
     icon: Settings
@@ -76,7 +82,6 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Fix 1: Remove 'expanded' prop and use data-state attribute instead */}
       <SidebarComponent className="shadow-md bg-sidebar border-r border-sidebar-border">
         <div className="flex items-center h-16 px-4 border-b border-sidebar-border">
           <div className="flex items-center gap-2">
@@ -93,7 +98,6 @@ const Sidebar = () => {
               <SidebarMenu>
                 {navigationItems.map((item) => (
                   <SidebarMenuItem key={item.path}>
-                    {/* Fix 2: Change 'active' prop to 'isActive' */}
                     <SidebarMenuButton asChild isActive={location.pathname === item.path}>
                       <a 
                         href={item.path} 

@@ -12,6 +12,7 @@ import CalendarView from "@/pages/CalendarView";
 import Team from "@/pages/Team";
 import Settings from "@/pages/Settings";
 import NotFound from "@/pages/NotFound";
+import Profile from "@/pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/calendar" element={<Layout><CalendarView /></Layout>} />
           <Route path="/team" element={<Layout><Team /></Layout>} />
           <Route path="/settings" element={<Layout><Settings /></Layout>} />
+          <Route path="/profile" element={<Layout><Profile /></Layout>} />
           <Route path="*" element={<Layout><NotFound /></Layout>} />
         </Routes>
       </BrowserRouter>
